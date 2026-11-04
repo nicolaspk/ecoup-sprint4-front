@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 
 interface ContatoFormInputs {
@@ -7,16 +8,19 @@ interface ContatoFormInputs {
 }
 
 export default function Contato() {
+  const [mensagemExibida, setMensagemExibida] = useState(false);
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors },
     reset
   } = useForm<ContatoFormInputs>();
 
   const onSubmit: SubmitHandler<ContatoFormInputs> = (data) => {
-    console.log("Dados capturados com sucesso:", data);
+    // Contato permanece demonstrativo: não há endpoint de mensagens na API Java.
+    void data;
     reset();
+    setMensagemExibida(true);
   };
 
   return (
@@ -30,9 +34,9 @@ export default function Contato() {
 
       <div className="w-full bg-[#10172a] p-[40px_20px] md:p-[40px] rounded-[12px] shadow-[0_20px_45px_rgba(0,0,0,0.35)] border border-white/5 border-t-[4px] border-t-[#00f5c8]">
         
-        {isSubmitSuccessful && (
+        {mensagemExibida && (
           <div className="mb-[20px] p-[15px] bg-[#00f5c8]/10 border border-[#00f5c8] text-[#00f5c8] rounded-[8px] font-bold">
-            Mensagem enviada com sucesso!
+            <span className="block text-lg">Mensagem validada com sucesso!</span>
           </div>
         )}
 
@@ -84,7 +88,7 @@ export default function Contato() {
             type="submit" 
             className="w-full mt-[10px] bg-[#00f5c8] text-[#050816] py-[15px] px-[30px] font-bold rounded-[30px] transition-all duration-250 border-none text-center uppercase tracking-[1px] shadow-[0_0_30px_rgba(0,245,200,0.25)] hover:bg-[#00ddb3] hover:-translate-y-[3px] hover:shadow-[0_0_25px_rgba(0,210,138,0.8)] cursor-pointer"
           >
-            Enviar Mensagem
+            Enviar mensagem
           </button>
 
         </form>
