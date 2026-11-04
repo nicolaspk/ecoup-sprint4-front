@@ -35,29 +35,31 @@ export default function Contato() {
       <div className="w-full bg-[#10172a] p-[40px_20px] md:p-[40px] rounded-[12px] shadow-[0_20px_45px_rgba(0,0,0,0.35)] border border-white/5 border-t-[4px] border-t-[#00f5c8]">
         
         {mensagemExibida && (
-          <div className="mb-[20px] p-[15px] bg-[#00f5c8]/10 border border-[#00f5c8] text-[#00f5c8] rounded-[8px] font-bold">
+          <div role="status" aria-live="polite" className="mb-[20px] p-[15px] bg-[#00f5c8]/10 border border-[#00f5c8] text-[#00f5c8] rounded-[8px] font-bold">
             <span className="block text-lg">Mensagem validada com sucesso!</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-[20px] text-left">
+        <form noValidate onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-[20px] text-left">
           
           <div className="flex flex-col gap-[8px]">
             <label htmlFor="nome" className="text-white font-bold">Nome Completo</label>
             <input
               id="nome"
+              aria-invalid={Boolean(errors.nome)}
               type="text"
               placeholder="Digite seu nome"
               className={`w-full p-[15px] bg-[#050816] rounded-[8px] text-white outline-none transition-all duration-250 ${errors.nome ? 'border-[2px] border-[#ff4d6d] shadow-[0_0_10px_rgba(255,77,109,0.3)]' : 'border border-white/15 focus:border-[#00f5c8] focus:shadow-[0_0_12px_rgba(0,210,138,0.3)]'}`}
               {...register("nome", { required: "O nome é obrigatório" })}
             />
-            {errors.nome && <span className="text-[#ff4d6d] text-[0.9rem] font-bold mt-[4px]">{errors.nome.message}</span>}
+            {errors.nome && <span role="alert" className="text-[#ff4d6d] text-[0.9rem] font-bold mt-[4px]">{errors.nome.message}</span>}
           </div>
 
           <div className="flex flex-col gap-[8px]">
             <label htmlFor="email" className="text-white font-bold">E-mail Corporativo</label>
             <input
               id="email"
+              aria-invalid={Boolean(errors.email)}
               type="email"
               placeholder="exemplo@soulup.com"
               className={`w-full p-[15px] bg-[#050816] rounded-[8px] text-white outline-none transition-all duration-250 ${errors.email ? 'border-[2px] border-[#ff4d6d] shadow-[0_0_10px_rgba(255,77,109,0.3)]' : 'border border-white/15 focus:border-[#00f5c8] focus:shadow-[0_0_12px_rgba(0,210,138,0.3)]'}`}
@@ -69,19 +71,20 @@ export default function Contato() {
                 }
               })}
             />
-            {errors.email && <span className="text-[#ff4d6d] text-[0.9rem] font-bold mt-[4px]">{errors.email.message}</span>}
+            {errors.email && <span role="alert" className="text-[#ff4d6d] text-[0.9rem] font-bold mt-[4px]">{errors.email.message}</span>}
           </div>
 
           <div className="flex flex-col gap-[8px]">
             <label htmlFor="mensagem" className="text-white font-bold">Sua Mensagem</label>
             <textarea
               id="mensagem"
+              aria-invalid={Boolean(errors.mensagem)}
               rows={4}
               placeholder="Como podemos ajudar?"
               className={`w-full p-[15px] bg-[#050816] rounded-[8px] text-white outline-none transition-all duration-250 resize-none ${errors.mensagem ? 'border-[2px] border-[#ff4d6d] shadow-[0_0_10px_rgba(255,77,109,0.3)]' : 'border border-white/15 focus:border-[#00f5c8] focus:shadow-[0_0_12px_rgba(0,210,138,0.3)]'}`}
               {...register("mensagem", { required: "A mensagem não pode estar vazia" })}
             ></textarea>
-            {errors.mensagem && <span className="text-[#ff4d6d] text-[0.9rem] font-bold mt-[4px]">{errors.mensagem.message}</span>}
+            {errors.mensagem && <span role="alert" className="text-[#ff4d6d] text-[0.9rem] font-bold mt-[4px]">{errors.mensagem.message}</span>}
           </div>
 
           <button 

@@ -70,12 +70,12 @@ export default function Participar() {
           <form noValidate onSubmit={handleSubmit(cadastrar)} className="space-y-5">
             <div>
               <label htmlFor="nome" className="block mb-2 font-bold">Seu nome</label>
-              <input id="nome" className={campo} placeholder="Como você se chama?" {...register('nome', { required: 'Informe seu nome', maxLength: { value: 120, message: 'Máximo de 120 caracteres' } })} />
+              <input id="nome" className={campo} placeholder="Como você se chama?" aria-invalid={Boolean(errors.nome)} {...register('nome', { required: 'Informe seu nome', validate: (valor) => valor.trim().length >= 2 || 'Informe um nome com pelo menos 2 caracteres', maxLength: { value: 120, message: 'Máximo de 120 caracteres' } })} />
               {errors.nome && <p className="text-[#ff8ba0] mt-2" role="alert">{errors.nome.message}</p>}
             </div>
             <div>
               <label htmlFor="email" className="block mb-2 font-bold">Seu e-mail</label>
-              <input id="email" type="email" className={campo} placeholder="seuemail@exemplo.com" {...register('email', { required: 'Informe seu e-mail', maxLength: { value: 150, message: 'Máximo de 150 caracteres' }, pattern: { value: /^\S+@\S+\.\S+$/, message: 'E-mail inválido' } })} />
+              <input id="email" type="email" className={campo} placeholder="seuemail@exemplo.com" aria-invalid={Boolean(errors.email)} {...register('email', { required: 'Informe seu e-mail', maxLength: { value: 150, message: 'Máximo de 150 caracteres' }, pattern: { value: /^\S+@\S+\.\S+$/, message: 'E-mail inválido' } })} />
               {errors.email && <p className="text-[#ff8ba0] mt-2" role="alert">{errors.email.message}</p>}
             </div>
             {erro && <p role="alert" className="text-[#ff8ba0]">{erro}</p>}
