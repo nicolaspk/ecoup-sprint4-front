@@ -31,6 +31,53 @@ O projeto foi desenvolvido seguindo estritamente as tecnologias e bibliotecas:
 
 ---
 
+## 🔌 Integração com a API Java — Sprint 4
+
+Na Sprint 4, o ECOUP passou a utilizar uma API RESTful
+desenvolvida com Java e Spring Boot, conectada ao Oracle.
+
+### Backend publicado
+
+https://ecoup-sprint4-java.onrender.com
+
+Repositório Java:
+https://github.com/nicolaspk/ecoup-sprint4-java
+
+### Endpoints disponíveis
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | /api/usuarios | Listar usuários |
+| GET | /api/usuarios/{codigo} | Consultar usuário |
+| POST | /api/usuarios | Cadastrar usuário |
+| GET | /api/acoes | Listar ações |
+| GET | /api/acoes/{codigo} | Consultar ação |
+| POST | /api/acoes | Registrar ação |
+
+### Configuração local
+
+Na pasta my-app, crie um arquivo .env.local:
+
+```ini
+VITE_API_URL=https://ecoup-sprint4-java.onrender.com
+```
+
+Execute os comandos dentro de my-app:
+
+```bash
+npm ci
+npm run dev
+```
+
+O arquivo .env.example contém a configuração de exemplo.
+
+A integração das páginas da Sprint 4 utiliza o serviço
+src/services/api.ts e os contratos definidos em
+src/types/types.ts.
+
+O deploy do Front-end será realizado na Vercel.
+
+---
 
 ## 📁 Arquitetura e Estrutura de Pastas
 O projeto foi modularizado separando rotas (pages) e componentes isolados de UI, garantindo escalabilidade e fácil manutenção:
@@ -72,7 +119,7 @@ my-app/
 
 1. **Clone este repositório:**
 ```bash
-git clone (https://github.com/nicolaspk/ecoup-sprint3)
+git clone (https://github.com/nicolaspk/ecoup-sprint4-front)
 
 ```
 
@@ -103,7 +150,7 @@ npm run dev
 
 🔗 **Links Importantes:**
 
-* **Repositório GitHub:** [Acessar Código Fonte](https://github.com/nicolaspk/ecoup-sprint3)
+* **Repositório GitHub:** [Acessar Código Fonte](https://github.com/nicolaspk/ecoup-sprint4-front)
 * **Apresentação em Vídeo:** https://youtu.be/fNAN-4qcYnM
 ---
 
