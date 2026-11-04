@@ -13,6 +13,7 @@ import Simulador from './routes/Simulador/index.tsx';
 import Dashboard from './routes/Dashboard/index.tsx';
 import Recompensas from './routes/Recompensas/index.tsx';
 import RecompensaDetalhes from './routes/RecompensaDetalhes/index.tsx';
+import Participar from './routes/Participar/index.tsx';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
       {path: '/sobre', element: <Sobre />},
       {path: '/faq', element: <Faq />},
       {path: '/contato', element: <Contato />},
+      {path: '/participar', element: <Participar />},
       {path: '/integrantes', element: <Integrantes />},
       {path: '/simulador', element: <Simulador />},
       {path: '/dashboard', element: <Dashboard />},
