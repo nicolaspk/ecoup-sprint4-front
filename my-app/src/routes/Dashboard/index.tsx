@@ -12,28 +12,28 @@ export default function Dashboard() {
   return (
     <section className="bg-[#10172a] p-[30px] md:p-[40px] rounded-[12px] shadow-[0_20px_45px_rgba(0,0,0,0.35)] border border-white/5">
       <h2 className="text-white text-[2rem] md:text-[2.2rem] mb-[15px] border-b-[2px] border-[#00f5c8] inline-block pb-[10px] font-bold">Análise de Dados e Solução ECOUP</h2>
-      <p className="text-[#94a3b8] text-[1.1rem] mb-[40px]">O painel abaixo apresenta o diagnóstico do problema enfrentado pela SoulUp e como o nosso sistema atua para reverter este cenário.</p>
+      <p className="text-[#94a3b8] text-[1.1rem] mb-[40px]">Este painel apresenta os indicadores do estudo de caso da SoulUp e a proposta da ECOUP. São valores de referência do cenário, não números consultados na API Java.</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[25px] mb-[50px]">
-        <article onClick={() => handleOpenModal('Total de Usuários', '61.242')} className="bg-[#121a2f] p-[30px_20px] rounded-[12px] text-center border border-white/5 cursor-pointer transition-all duration-250 hover:-translate-y-[5px] hover:border-[#00f5c8] hover:shadow-[0_0_30px_rgba(0,245,200,0.25)]">
+        <button type="button" onClick={() => handleOpenModal('Total de Usuários', '61.242')} className="bg-[#121a2f] p-[30px_20px] rounded-[12px] text-center border border-white/5 cursor-pointer transition-all duration-250 hover:-translate-y-[5px] hover:border-[#00f5c8] hover:shadow-[0_0_30px_rgba(0,245,200,0.25)]">
           <h3 className="text-[#94a3b8] text-[1.1rem] mb-[10px] font-bold">Total de Usuários</h3>
           <p className="text-[#00f5c8] text-[2.2rem] font-bold">61.242</p>
-        </article>
+        </button>
 
-        <article onClick={() => handleOpenModal('Usuários Ativos', '9.599')} className="bg-[#121a2f] p-[30px_20px] rounded-[12px] text-center border-l-[4px] border-l-[#ff4d6d] cursor-pointer transition-all duration-250 hover:-translate-y-[5px] hover:border-[#00f5c8] hover:shadow-[0_0_30px_rgba(0,245,200,0.25)]">
+        <button type="button" onClick={() => handleOpenModal('Usuários Ativos', '9.599')} className="bg-[#121a2f] p-[30px_20px] rounded-[12px] text-center border-l-[4px] border-l-[#ff4d6d] cursor-pointer transition-all duration-250 hover:-translate-y-[5px] hover:border-[#00f5c8] hover:shadow-[0_0_30px_rgba(0,245,200,0.25)]">
           <h3 className="text-[#94a3b8] text-[1.1rem] mb-[10px] font-bold">Usuários Ativos</h3>
           <p className="text-[#00f5c8] text-[2.2rem] font-bold">9.599 <span className="text-[#ff4d6d] text-[1.2rem] ml-[5px] block md:inline">(-77%)</span></p>
-        </article>
+        </button>
 
-        <article onClick={() => handleOpenModal('Novos Usuários', '2.875')} className="bg-[#121a2f] p-[30px_20px] rounded-[12px] text-center border-l-[4px] border-l-[#ff4d6d] cursor-pointer transition-all duration-250 hover:-translate-y-[5px] hover:border-[#00f5c8] hover:shadow-[0_0_30px_rgba(0,245,200,0.25)]">
+        <button type="button" onClick={() => handleOpenModal('Novos Usuários', '2.875')} className="bg-[#121a2f] p-[30px_20px] rounded-[12px] text-center border-l-[4px] border-l-[#ff4d6d] cursor-pointer transition-all duration-250 hover:-translate-y-[5px] hover:border-[#00f5c8] hover:shadow-[0_0_30px_rgba(0,245,200,0.25)]">
           <h3 className="text-[#94a3b8] text-[1.1rem] mb-[10px] font-bold">Novos Usuários</h3>
           <p className="text-[#00f5c8] text-[2.2rem] font-bold">2.875 <span className="text-[#ff4d6d] text-[1.2rem] ml-[5px] block md:inline">(-68%)</span></p>
-        </article>
+        </button>
 
-        <article onClick={() => handleOpenModal('Ações (Eventos)', '183.057')} className="bg-[#121a2f] p-[30px_20px] rounded-[12px] text-center border-l-[4px] border-l-[#ff4d6d] cursor-pointer transition-all duration-250 hover:-translate-y-[5px] hover:border-[#00f5c8] hover:shadow-[0_0_30px_rgba(0,245,200,0.25)]">
+        <button type="button" onClick={() => handleOpenModal('Ações (Eventos)', '183.057')} className="bg-[#121a2f] p-[30px_20px] rounded-[12px] text-center border-l-[4px] border-l-[#ff4d6d] cursor-pointer transition-all duration-250 hover:-translate-y-[5px] hover:border-[#00f5c8] hover:shadow-[0_0_30px_rgba(0,245,200,0.25)]">
           <h3 className="text-[#94a3b8] text-[1.1rem] mb-[10px] font-bold">Ações (Eventos)</h3>
           <p className="text-[#00f5c8] text-[2.2rem] font-bold">183.057 <span className="text-[#ff4d6d] text-[1.2rem] ml-[5px] block md:inline">(-75%)</span></p>
-        </article>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-[40px]">
@@ -50,7 +50,7 @@ export default function Dashboard() {
         <div className="bg-[#121a2f] p-[25px_15px] md:p-[40px_30px] rounded-[12px] border border-white/5">
           <h3 className="text-white text-[1.4rem] font-bold mb-[15px]">A Nossa Solução</h3>
           <p className="text-[#94a3b8] text-[1rem] md:text-[1.1rem] mb-[15px] text-left"><strong className="text-[#00f5c8]">O Problema:</strong> Os dados indicam queda drástica a partir de Abril, demonstrando baixa retenção e falta de incentivo contínuo.</p>
-          <p className="text-[#94a3b8] text-[1rem] md:text-[1.1rem] text-left"><strong className="text-[#00f5c8]">Como resolvemos:</strong> A ECOUP aplica gamificação sustentável baseada em Pontos Ecoa. Cada ação gera recompensas reais na conta de energia, aumentando engajamento e reduzindo abandono da plataforma.</p>
+          <p className="text-[#94a3b8] text-[1rem] md:text-[1.1rem] text-left"><strong className="text-[#00f5c8]">Como resolvemos:</strong> A ECOUP aplica gamificação sustentável baseada em Pontos Ecoa. O protótipo apresenta categorias, pontuação ilustrativa e recompensas propostas para incentivar o engajamento.</p>
         </div>
       </div>
 
