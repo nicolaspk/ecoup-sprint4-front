@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { buscarUsuario, cadastrarAcao } from '../../services/api';
-import { categoriasAcao } from '../../types/types';
+import { categoriasAcao, obterPontosPorCategoria } from '../../types/types';
 import type { CategoriaAcao, DadosAcao, Usuario } from '../../types/types';
 
 type FormularioAcao = { titulo: string; categoria: CategoriaAcao; linkEvidencia: string };
@@ -71,7 +71,13 @@ export default function Simulador() {
   }
 
   const categoriaSelecionada = watch('categoria');
+  const titulo = watch('titulo');
+  const pontosEstimados = categoriaSelecionada ? obterPontosPorCategoria(categoriaSelecionada) : 0;
   const campo = 'w-full p-[14px] bg-[#050816] border border-white/15 focus:border-[#00f5c8] rounded-[10px] text-white outline-none';
+
+  const descricaoCategoria = useMemo(() => {
+    return categoriasAcao.find((item) => item.nome === categoriaSelecionada)?.descricao ?? 'Escolha uma categoria para visualizar a pontuação de referência.';
+  }, [categoriaSelecionada]);
 
   return (
     <section className="space-y-7">
@@ -106,7 +112,7 @@ export default function Simulador() {
       )}
 
       {participante && (
-        <div className="grid grid-cols-1 gap-6 items-stretch">
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] gap-6 items-stretch">
           <form noValidate onSubmit={handleSubmit(registrarAcao)} className="space-y-6 bg-[#10172a] rounded-[18px] p-6 sm:p-8 border border-white/10">
             <div className="flex flex-wrap justify-between gap-4 items-start">
               <div>
@@ -185,7 +191,28 @@ export default function Simulador() {
             </button>
           </form>
 
+          <aside className="flex flex-col gap-5 h-full min-w-0">
+            <div className="rounded-[18px] bg-[#10172a] p-6 border border-[#00f5c8]/20">
+              <p className="text-[#94a3b8] text-sm uppercase tracking-[1px] mb-2">Resumo da ação</p>
+              <h3 className="text-white text-2xl font-bold">{titulo?.trim() ? titulo : 'Sua atitude aparecerá aqui'}</h3>
+              <p className="text-[#94a3b8] mt-3 leading-7">{descricaoCategoria}</p>
+              <div className="mt-5 p-4 rounded-[14px] bg-[#0b132b] border border-white/10">
+                <p className="text-[#94a3b8]">Pontuação de referência</p>
+                <p className="text-[#00f5c8] text-4xl font-bold mt-1">{pontosEstimados} pts</p>
+                <p className="text-[#94a3b8] text-sm mt-2">A pontuação exibida é uma simulação visual do protótipo para representar o ganho esperado pela categoria escolhida.</p>
+              </div>
+            </div>
 
+            <div className="rounded-[18px] bg-[#10172a] p-6 border border-white/10 flex-1 flex flex-col">
+              <h3 className="text-white text-xl font-bold mb-3">Próximos passos</h3>
+              <ol className="list-decimal pl-5 text-[#94a3b8] space-y-3 leading-7 flex-1 xl:flex xl:flex-col xl:justify-evenly">
+                <li>Descreva sua ação e selecione uma categoria.</li>
+                <li>Informe o link de uma evidência.</li>
+                <li>Conclua o registro e acompanhe a página Ações.</li>
+              </ol>
+              <Link to="/acoes" className="text-[#00f5c8] underline inline-block mt-5 self-start">Ver ações registradas</Link>
+            </div>
+          </aside>
         </div>
       )}
 
