@@ -1,183 +1,222 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { buscarUsuario, cadastrarAcao } from '../../services/api';
+import { categoriasAcao, obterPontosPorCategoria } from '../../types/types';
+import type { CategoriaAcao, DadosAcao, Usuario } from '../../types/types';
+
+type FormularioAcao = { titulo: string; categoria: CategoriaAcao; linkEvidencia: string };
+
+// A sessão usa a mesma chave do cadastro. Após unir as branches,
+// a equipe pode centralizar estas funções em services/participante.ts.
+function obterParticipante(): number | null {
+  const valor = window.sessionStorage.getItem('ecoup-participante');
+  const codigo = Number(valor);
+  return valor && Number.isInteger(codigo) && codigo > 0 ? codigo : null;
+}
+
+function sairDoParticipante(): void {
+  window.sessionStorage.removeItem('ecoup-participante');
+}
 
 export default function Simulador() {
-  const [step, setStep] = useState(0);
-  const [pontos, setPontos] = useState(0);
-  const [acaoTitulo, setAcaoTitulo] = useState('');
-  const [pontosPendentes, setPontosPendentes] = useState(0);
-  const [mensagem, setMensagem] = useState('Aguardando o início da jornada...');
-  const [isAnalisando, setIsAnalisando] = useState(false);
-  const [modalSucesso, setModalSucesso] = useState(false);
-  const [erro, setErro] = useState(false);
+  const navegar = useNavigate();
+  const localizacao = useLocation();
+  const nomeCadastro = (localizacao.state as { cadastroConcluido?: string } | null)?.cadastroConcluido;
+  const [participante, setParticipante] = useState<Usuario | null>(null);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState('');
+  const [enviando, setEnviando] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<FormularioAcao>();
 
   useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;    
-    if (isAnalisando) {
-      setMensagem('A IA da ECOUP está analisando sua evidência...');
-      timer = setTimeout(() => {
-        setIsAnalisando(false);
-        const novosPontos = Math.min(pontos + pontosPendentes, 100);
-        setPontos(novosPontos);
-        setMensagem(`Evidência Validada! Ganhou +${pontosPendentes} Pontos Ecoa!`);
-        
-        if (novosPontos >= 100) {
-          setTimeout(() => setModalSucesso(true), 800);
-        } else {
-          setTimeout(() => {
-            setAcaoTitulo('');
-            setPontosPendentes(0);
-            setMensagem('Aguardando nova ação para alcançar os 100 pontos...');
-            setStep(1);
-          }, 2500);
+    register('categoria', { required: 'Escolha a categoria' });
+  }, [register]);
+
+  useEffect(() => {
+    async function carregar() {
+      const codigo = obterParticipante();
+      if (codigo !== null) {
+        try {
+          setParticipante(await buscarUsuario(codigo));
+        } catch {
+          sairDoParticipante();
+          setErro('Não foi possível confirmar seu cadastro.');
         }
-      }, 3000);
+      }
+      setCarregando(false);
     }
+    carregar();
+  }, []);
 
-    return () => clearTimeout(timer);
-  }, [isAnalisando, pontos, pontosPendentes]);
-
-  const iniciarSimulacao = () => {
-    setStep(1);
-    setMensagem('Descreva a sua ação e escolha uma categoria...');
-  };
-
-  const avancarParaEnvio = () => {
-    if (acaoTitulo === '') {
-      setErro(true);
-      return;
+  async function registrarAcao(dados: FormularioAcao) {
+    if (!participante) return;
+    setEnviando(true);
+    setErro('');
+    try {
+      const registro: DadosAcao = { ...dados, usuarioCodigo: participante.codigo };
+      const acao = await cadastrarAcao(registro);
+      navegar(`/acoes/${acao.codigo}`, { state: { acaoRegistrada: acao.titulo } });
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : 'Não foi possível cadastrar a ação.');
+    } finally {
+      setEnviando(false);
     }
-    setErro(false);
-    setStep(2);
-    setMensagem('Aguardando o envio do arquivo da galeria...');
-  };
+  }
 
-  const reiniciarCiclo = () => {
-    setModalSucesso(false);
-    setPontos(0);
-    setAcaoTitulo('');
-    setPontosPendentes(0);
-    setStep(1);
-    setMensagem('Pronto para um novo ciclo de sustentabilidade.');
-  };
+  const categoriaSelecionada = watch('categoria');
+  const titulo = watch('titulo');
+  const pontosEstimados = categoriaSelecionada ? obterPontosPorCategoria(categoriaSelecionada) : 0;
+  const campo = 'w-full p-[14px] bg-[#050816] border border-white/15 focus:border-[#00f5c8] rounded-[10px] text-white outline-none';
 
-  const categorias = [
-    { nome: 'Mobilidade', pts: 30 },
-    { nome: 'Reciclagem', pts: 40 },
-    { nome: 'Energia', pts: 50 },
-    { nome: 'Outros', pts: 20 },
-  ];
+  const descricaoCategoria = useMemo(() => {
+    return categoriasAcao.find((item) => item.nome === categoriaSelecionada)?.descricao ?? 'Escolha uma categoria para visualizar a pontuação de referência.';
+  }, [categoriaSelecionada]);
 
   return (
-    <section className="bg-[#10172a] p-[30px] md:p-[40px] rounded-[12px] border border-white/5">
-      <h2 className="text-white text-[2rem] md:text-[2.2rem] mb-[15px] border-b-[2px] border-[#00f5c8] inline-block pb-[10px] font-bold">Protótipo da Jornada do Usuário</h2>
-      <p className="text-[#94a3b8] text-[1.1rem] mb-[40px]">Siga o fluxo interativo para entender como a ECOUP valida ações customizadas.</p>
-
-      <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-[35px] items-start">
-        
-        <div className="bg-[#10172a] p-[25px] md:p-[45px_35px] rounded-[14px] border border-white/5 min-h-[450px] flex flex-col justify-center">
-          
-          {step === 0 && (
-            <div className="text-center">
-              <div className="text-[4rem] mb-[20px]">🎮</div>
-              <h3 className="text-[#00f5c8] font-bold text-[1.8rem] mb-[20px]">Bem-vindo ao Protótipo ECOUP</h3>
-              <p className="text-[#94a3b8] text-[1.1rem] leading-[1.8] mb-[30px]">Assuma o papel de um utilizador. Você registrará o nome da sua atitude sustentável, escolherá a categoria e enviará um arquivo para a nossa IA analisar.</p>
-              <button onClick={iniciarSimulacao} className="bg-[#00f5c8] text-[#050816] py-[15px] px-[30px] font-bold rounded-[30px] uppercase hover:bg-[#00ddb3] cursor-pointer">Iniciar Simulação</button>
-            </div>
-          )}
-
-          {step === 1 && (
-            <div>
-              <h3 className="text-white text-[1.6rem] flex items-center gap-[15px] mb-[30px]">
-                <span className="bg-[#00f5c8] text-[#050816] w-[36px] h-[36px] flex justify-center items-center rounded-full font-bold">1</span> 
-                Qual foi sua atitude sustentável?
-              </h3>
-              
-              <div className="mb-[30px]">
-                <label className="text-white block mb-[10px] font-bold">Título / Nome da Ação:</label>
-                <input 
-                  type="text" 
-                  value={acaoTitulo}
-                  onChange={(e) => setAcaoTitulo(e.target.value)}
-                  placeholder="Ex: Fui de bicicleta para a faculdade..." 
-                  className={`w-full p-[15px] bg-[#050816] border ${erro ? 'border-[#ff4d6d]' : 'border-white/15 focus:border-[#00f5c8]'} rounded-[8px] text-white outline-none`}
-                />
-                {erro && <span className="text-[#ff4d6d] text-[0.95rem] font-bold mt-[8px] block">Você precisa digitar um título para avançar</span>}
-              </div>
-
-              <p className="text-[#94a3b8] font-bold mb-[20px]">Selecione a categoria para cálculo de impacto:</p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-[20px] mb-[40px]">
-                {categorias.map((cat, index) => (
-                  <button 
-                    key={index}
-                    onClick={() => setPontosPendentes(cat.pts)}
-                    className={`p-[20px] rounded-[12px] border bg-[#050816] text-center cursor-pointer ${pontosPendentes === cat.pts ? 'border-[#00f5c8]' : 'border-white/5 hover:border-[#00f5c8]/50'}`}
-                  >
-                    <h4 className="text-white font-bold mb-[5px]">{cat.nome}</h4>
-                    <span className="text-[#00f5c8] font-bold text-[0.9rem]">Até {cat.pts} pts</span>
-                  </button>
-                ))}
-              </div>
-
-              {pontosPendentes > 0 && (
-                <button onClick={avancarParaEnvio} className="w-full bg-[#00f5c8] text-[#050816] py-[15px] font-bold rounded-[8px] uppercase hover:bg-[#00ddb3] cursor-pointer">Avançar para Envio</button>
-              )}
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="text-center">
-              <h3 className="text-white text-[1.6rem] flex items-center justify-center gap-[15px] mb-[30px]">
-                <span className="bg-[#00f5c8] text-[#050816] w-[36px] h-[36px] flex justify-center items-center rounded-full font-bold">2</span> 
-                Evidência Real
-              </h3>
-              <div className="p-[40px_20px] bg-[#050816] border-[2px] border-dashed border-[#00f5c8] rounded-[12px] flex flex-col items-center gap-[20px]">
-                <div className="text-[4rem]">📸</div>
-                <div>
-                  <p className="text-white mb-[5px]">Ação selecionada:</p>
-                  <h4 className="text-[#00f5c8] text-[1.5rem] font-bold">{acaoTitulo}</h4>
-                </div>
-                {isAnalisando === false ? (
-                  <button onClick={() => setIsAnalisando(true)} className="bg-[#00f5c8] text-[#050816] py-[15px] px-[30px] font-bold rounded-[8px] uppercase hover:bg-[#00ddb3] cursor-pointer w-full max-w-[350px]">Analisar Evidência na IA</button>
-                ) : (
-                  <button disabled className="bg-[#00f5c8]/50 text-[#050816] py-[15px] px-[30px] font-bold rounded-[8px] uppercase cursor-not-allowed w-full max-w-[350px]">Analisando...</button>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <aside className="flex flex-col gap-[25px]">
-          <div className="bg-[#10172a] p-[30px] rounded-[14px] border border-[#00f5c8]/20">
-            <div className="flex flex-col items-center gap-[10px] mb-[15px]">
-              <h4 className="text-white font-bold text-[1.2rem]">Seus Pontos Ecoa</h4>
-              <span className="text-[#00f5c8] font-bold text-[1.8rem]">{pontos} / 100</span>
-            </div>
-            <div className="w-full bg-[#121a2f] h-[30px] rounded-[20px] overflow-hidden mb-[20px]">
-              <div 
-                className="h-full bg-[#00f5c8]" 
-                style={{ width: `${pontos}%` }}
-              ></div>
-            </div>
-            <p className="text-[#94a3b8] text-[1rem] text-center">Atingir 100 pontos desbloqueia o subsídio na conta de energia!</p>
-          </div>
-
-          <div className="bg-[#060b19] p-[30px_20px] border border-white/5 rounded-[10px] flex flex-col items-center justify-center min-h-[100px] text-center">
-            <p className={isAnalisando ? 'text-[#94a3b8]' : 'text-[#00f5c8] font-bold'}>{mensagem}</p>
-          </div>
-        </aside>
+    <section className="space-y-7">
+      <div className="mb-2">
+        <p className="text-[#00f5c8] text-xs font-semibold uppercase tracking-widest mb-3">Sua jornada sustentável</p>
+        <h2 className="text-white text-[2rem] md:text-[2.3rem] font-bold mb-3">Registrar ação</h2>
+        <div className="w-20 h-1 rounded-full bg-[#00f5c8] mb-4" />
+        <p className="text-[#94a3b8] max-w-[760px] leading-7">
+          Conte o que você fez pelo meio ambiente, escolha uma categoria e envie o link da evidência.
+        </p>
       </div>
 
-      {modalSucesso && (
-        <div className="fixed top-0 left-0 w-full h-full bg-[#0b132b]/95 flex justify-center items-center z-[9999]">
-          <div className="bg-[#10172a] p-[45px_30px] rounded-[18px] text-center max-w-[480px] w-[95%] border-[2px] border-[#00f5c8]">
-            <div className="text-[5rem] mb-[15px]">🏆</div>
-            <h2 className="text-white text-[2rem] font-bold mb-[15px]">PARABÉNS!</h2>
-            <p className="text-[#00f5c8] text-[1.3rem] font-bold mb-[20px]">Você atingiu 100 Pontos Ecoa!</p>
-            <p className="text-[#94a3b8] text-[1.1rem] mb-[30px]">O seu subsídio para a conta de energia elétrica foi desbloqueado com sucesso no sistema da SoulUp!</p>
-            <button onClick={reiniciarCiclo} className="bg-[#00f5c8] text-[#050816] py-[15px] px-[30px] font-bold rounded-[30px] uppercase hover:bg-[#00ddb3] cursor-pointer">Começar Novo Ciclo</button>
+      {participante && nomeCadastro && (
+        <div role="status" aria-live="polite" className="flex items-start gap-3 rounded-[14px] border border-[#00f5c8]/40 bg-[#00f5c8]/10 p-4 sm:p-5">
+          <span aria-hidden="true" className="text-[#00f5c8] text-xl font-bold">✓</span>
+          <div>
+            <p className="text-[#00f5c8] font-bold text-lg">Bem-vindo à ECOUP, {nomeCadastro}!</p>
+            <p className="text-[#d5e4e8] text-sm sm:text-base mt-1">Seu cadastro foi realizado com sucesso. Agora você pode registrar sua primeira ação sustentável.</p>
           </div>
         </div>
       )}
+
+      {carregando && <p role="status" className="text-[#94a3b8]">Carregando participante...</p>}
+
+      {!carregando && !participante && (
+        <div className="p-6 bg-[#10172a] rounded-xl border border-white/10 max-w-[680px]">
+          <p className="mb-4 text-[#94a3b8]">Antes de registrar sua primeira ação, faça seu cadastro na ECOUP.</p>
+          <Link to="/participar" className="inline-block bg-[#00f5c8] text-[#050816] font-bold rounded-lg py-3 px-5">
+            Fazer meu cadastro
+          </Link>
+        </div>
+      )}
+
+      {participante && (
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] gap-6 items-stretch">
+          <form noValidate onSubmit={handleSubmit(registrarAcao)} className="space-y-6 bg-[#10172a] rounded-[18px] p-6 sm:p-8 border border-white/10">
+            <div className="flex flex-wrap justify-between gap-4 items-start">
+              <div>
+                <p className="text-[#94a3b8] text-sm uppercase tracking-[1px]">Registrando como</p>
+                <p className="text-white text-lg font-bold mt-1">{participante.nome}</p>
+                <p className="text-[#94a3b8] text-sm">#{participante.codigo} · {participante.email}</p>
+              </div>
+              <Link to="/participar" className="text-[#00f5c8] border border-[#00f5c8]/40 rounded-lg px-4 py-2 text-sm font-bold hover:bg-[#00f5c8]/10">
+                Trocar participante
+              </Link>
+            </div>
+
+            <div>
+              <label className="block font-bold mb-2 text-white" htmlFor="titulo">Qual foi a sua atitude sustentável?</label>
+              <input
+                id="titulo"
+                maxLength={200}
+                placeholder="Ex.: Fui de bicicleta para a faculdade"
+                className={campo}
+                {...register('titulo', {
+                  required: 'Descreva a atitude',
+                  maxLength: { value: 200, message: 'Máximo de 200 caracteres' },
+                })}
+              />
+              {errors.titulo && <p role="alert" className="text-[#ff8ba0] mt-2">{errors.titulo.message}</p>}
+            </div>
+
+            <div>
+              <p className="block font-bold mb-3 text-white">Escolha a categoria</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-stretch auto-rows-fr">
+                {categoriasAcao.map((categoria) => {
+                  const selecionada = categoriaSelecionada === categoria.nome;
+                  return (
+                    <button
+                      key={categoria.nome}
+                      type="button"
+                      aria-pressed={selecionada}
+                      onClick={() => setValue('categoria', categoria.nome, { shouldValidate: true })}
+                      className={`text-left h-full min-h-[142px] sm:min-h-[188px] p-4 rounded-[14px] border transition-all flex flex-col ${selecionada ? 'border-[#00f5c8] bg-[#0d1730]' : 'border-white/10 bg-[#0b132b] hover:border-[#00f5c8]/45'}`}
+                    >
+                      <div className="flex items-center justify-between gap-3 mb-2">
+                        <span className="text-2xl">{categoria.icone}</span>
+                        <span className="text-[#00f5c8] text-sm font-bold">+{categoria.pontos} pts</span>
+                      </div>
+                      <h3 className="text-white font-bold text-base sm:text-lg">{categoria.nome}</h3>
+                      <p className="text-[#94a3b8] text-sm mt-2 leading-5 flex-1">{categoria.descricao}</p>
+                    </button>
+                  );
+                })}
+              </div>
+              {errors.categoria && <p role="alert" className="text-[#ff8ba0] mt-2">{errors.categoria.message}</p>}
+            </div>
+
+            <div>
+              <label className="block font-bold mb-2 text-white" htmlFor="linkEvidencia">Link da evidência</label>
+              <input
+                id="linkEvidencia"
+                type="url"
+                maxLength={1000}
+                placeholder="https://exemplo.com/video"
+                className={campo}
+                {...register('linkEvidencia', {
+                  required: 'Informe a URL da evidência',
+                  pattern: { value: /^https?:\/\/.+/i, message: 'Use uma URL que comece com http:// ou https://' },
+                  maxLength: { value: 1000, message: 'Máximo de 1000 caracteres' },
+                })}
+              />
+              {errors.linkEvidencia && <p role="alert" className="text-[#ff8ba0] mt-2">{errors.linkEvidencia.message}</p>}
+              <p className="text-[#94a3b8] text-sm mt-2">Use um link de teste. O protótipo registra a ação, mas não faz upload do vídeo.</p>
+            </div>
+
+            {erro && <p role="alert" className="text-[#ff8ba0]">{erro}</p>}
+
+            <button type="submit" disabled={enviando} className="bg-[#00f5c8] text-[#050816] rounded-[12px] py-3 px-6 font-bold disabled:opacity-50">
+              {enviando ? 'Salvando...' : 'Registrar ação'}
+            </button>
+          </form>
+
+          <aside className="flex flex-col gap-5 h-full min-w-0">
+            <div className="rounded-[18px] bg-[#10172a] p-6 border border-[#00f5c8]/20">
+              <p className="text-[#94a3b8] text-sm uppercase tracking-[1px] mb-2">Resumo da ação</p>
+              <h3 className="text-white text-2xl font-bold">{titulo?.trim() ? titulo : 'Sua atitude aparecerá aqui'}</h3>
+              <p className="text-[#94a3b8] mt-3 leading-7">{descricaoCategoria}</p>
+              <div className="mt-5 p-4 rounded-[14px] bg-[#0b132b] border border-white/10">
+                <p className="text-[#94a3b8]">Pontuação de referência</p>
+                <p className="text-[#00f5c8] text-4xl font-bold mt-1">{pontosEstimados} pts</p>
+                <p className="text-[#94a3b8] text-sm mt-2">A pontuação exibida é uma simulação visual do protótipo para representar o ganho esperado pela categoria escolhida.</p>
+              </div>
+            </div>
+
+            <div className="rounded-[18px] bg-[#10172a] p-6 border border-white/10 flex-1 flex flex-col">
+              <h3 className="text-white text-xl font-bold mb-3">Próximos passos</h3>
+              <ol className="list-decimal pl-5 text-[#94a3b8] space-y-3 leading-7 flex-1 xl:flex xl:flex-col xl:justify-evenly">
+                <li>Descreva sua ação e selecione uma categoria.</li>
+                <li>Informe o link de uma evidência.</li>
+                <li>Conclua o registro e acompanhe a página Ações.</li>
+              </ol>
+              <Link to="/acoes" className="text-[#00f5c8] underline inline-block mt-5 self-start">Ver ações registradas</Link>
+            </div>
+          </aside>
+        </div>
+      )}
+
+      {erro && !participante && <p role="alert" className="text-[#ff8ba0]">{erro}</p>}
     </section>
   );
 }
