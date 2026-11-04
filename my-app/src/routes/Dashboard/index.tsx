@@ -1,8 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Dashboard() {
   const [modalAtivo, setModalAtivo] = useState(false);
   const [metricaAtual, setMetricaAtual] = useState({ titulo: '', valor: '' });
+  const fecharModalRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!modalAtivo) return;
+    fecharModalRef.current?.focus();
+    const aoTeclar = (evento: KeyboardEvent) => {
+      if (evento.key === 'Escape') setModalAtivo(false);
+    };
+    window.addEventListener('keydown', aoTeclar);
+    return () => window.removeEventListener('keydown', aoTeclar);
+  }, [modalAtivo]);
 
   const handleOpenModal = (titulo: string, valor: string) => {
     setMetricaAtual({ titulo, valor });
@@ -55,16 +66,16 @@ export default function Dashboard() {
       </div>
 
       {modalAtivo && (
-        <div className="fixed top-0 left-0 w-full h-full bg-[#0b132b]/95 flex justify-center items-center z-[9999]">
-          <div className="bg-[#10172a] p-[30px_15px] md:p-[45px_30px] rounded-[18px] text-center max-w-[480px] w-[95%] border-[2px] border-[#00f5c8] shadow-[0_0_35px_rgba(0,210,138,0.35)]">
+        <div role="presentation" className="fixed top-0 left-0 w-full h-full bg-[#0b132b]/95 flex justify-center items-center z-[9999]">
+          <div role="dialog" aria-modal="true" aria-labelledby="titulo-modal-metrica" className="bg-[#10172a] p-[30px_15px] md:p-[45px_30px] rounded-[18px] text-center max-w-[480px] w-[95%] border-[2px] border-[#00f5c8] shadow-[0_0_35px_rgba(0,210,138,0.35)]">
             <div className="text-[3rem] md:text-[4rem] mb-[15px]">📊</div>
-            <h2 className="text-white text-[1.4rem] md:text-[1.6rem] font-bold mb-[15px]">{metricaAtual.titulo}</h2>
+            <h2 id="titulo-modal-metrica" className="text-white text-[1.4rem] md:text-[1.6rem] font-bold mb-[15px]">{metricaAtual.titulo}</h2>
             <p className="text-[#00f5c8] text-[1.6rem] md:text-[2.2rem] font-bold mb-[20px]">{metricaAtual.valor}</p>
             <p className="text-[#94a3b8] text-[1rem] md:text-[1.1rem] mb-[30px]">A nossa gamificação atua para melhorar e estabilizar este indicador corporativo.</p>
-            <button onClick={() => setModalAtivo(false)} className="bg-[#00f5c8] text-[#050816] py-[12px] px-[30px] font-bold rounded-[30px] border-none uppercase tracking-[1px] cursor-pointer hover:bg-[#00ddb3]">Entendido</button>
+            <button ref={fecharModalRef} type="button" onClick={() => setModalAtivo(false)} className="bg-[#00f5c8] text-[#050816] py-[12px] px-[30px] font-bold rounded-[30px] border-none uppercase tracking-[1px] cursor-pointer hover:bg-[#00ddb3]">Entendido</button>
           </div>
         </div>
       )}
     </section>
   );
-}
+}       
