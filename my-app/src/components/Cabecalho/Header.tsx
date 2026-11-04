@@ -21,10 +21,12 @@ const outrosLinks = [
 export default function Cabecalho() {
   const [menuAberto, setMenuAberto] = useState(false);
   const [maisAberto, setMaisAberto] = useState(false);
+  const [maisMobileAberto, setMaisMobileAberto] = useState(false);
 
   function fecharMenus() {
     setMenuAberto(false);
     setMaisAberto(false);
+    setMaisMobileAberto(false);
   }
 
   const linkPrincipal = 'inline-flex items-center justify-center py-3 px-3 xl:px-4 rounded-lg text-white font-semibold text-[16px] hover:bg-[#00f5c8]/10 hover:text-[#00f5c8] focus-visible:outline-2 focus-visible:outline-[#00f5c8] transition-colors whitespace-nowrap';
@@ -72,7 +74,10 @@ export default function Cabecalho() {
           aria-expanded={menuAberto}
           aria-controls="menu-mobile"
           className="lg:hidden inline-flex items-center gap-2 border border-[#00f5c8]/70 text-[#00f5c8] font-semibold text-[16px] py-2.5 px-4 rounded-xl cursor-pointer hover:bg-[#00f5c8]/10"
-          onClick={() => setMenuAberto(!menuAberto)}
+          onClick={() => {
+            setMenuAberto(!menuAberto);
+            setMaisMobileAberto(false);
+          }}
         >
           <span aria-hidden="true" className="text-xl leading-none">{menuAberto ? '×' : '☰'}</span>
           {menuAberto ? 'Fechar' : 'Menu'}
@@ -85,13 +90,34 @@ export default function Cabecalho() {
           aria-label="Navegação em celular e tablet"
           className="lg:hidden absolute top-full right-[4%] sm:right-[5%] mt-2 w-[350px] max-w-[92vw] bg-[#10172a] border border-white/15 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] p-3 sm:p-4 max-h-[72vh] overflow-y-auto"
         >
-          <p className="text-[#94a3b8] text-sm font-semibold px-3 pt-1 pb-2">Todas as páginas</p>
+          <p className="text-[#94a3b8] text-sm font-semibold px-3 pt-1 pb-2">Navegação</p>
           <div className="grid grid-cols-1 gap-1">
-            {[...linksPrincipais, ...outrosLinks].map((link) => (
+            {linksPrincipais.map((link) => (
               <Link key={link.to} to={link.to} className={linkCompacto} onClick={fecharMenus}>
                 {link.label}
               </Link>
             ))}
+          </div>
+
+          <div className="mt-2 pt-2 border-t border-white/10">
+            <button
+              type="button"
+              aria-controls="menu-mobile-outras"
+              aria-expanded={maisMobileAberto}
+              className="w-full flex justify-between items-center rounded-xl px-4 py-3 text-[#00f5c8] text-[16px] font-semibold hover:bg-[#00f5c8]/10"
+              onClick={() => setMaisMobileAberto(!maisMobileAberto)}
+            >
+              Outras páginas <span aria-hidden="true">{maisMobileAberto ? '▴' : '▾'}</span>
+            </button>
+            {maisMobileAberto && (
+              <div id="menu-mobile-outras" className="grid grid-cols-1 gap-1 mt-1 pl-2">
+                {outrosLinks.map((link) => (
+                  <Link key={link.to} to={link.to} className={linkCompacto} onClick={fecharMenus}>
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </nav>
       )}
