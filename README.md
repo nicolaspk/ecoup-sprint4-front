@@ -120,9 +120,9 @@ ECOUP (raiz do repositório)
 | **Site público na Vercel** | https://ecoup-sprint4-front.vercel.app |
 | **API Java publicada no Render** | https://ecoup-sprint4-java.onrender.com |
 | **GitHub do backend Java** | https://github.com/nicolaspk/ecoup-sprint4-java |
-| **Vídeo de apresentação da Sprint 4 (YouTube)** | **PENDENTE:** inserir o link do vídeo novo de até 3 minutos antes da entrega |
+| **Vídeo de apresentação no YouTube (Sprint 3)** | https://youtu.be/fNAN-4qcYnM |
 
-> **Atenção antes de entregar:** o vídeo da Sprint 3 não demonstra a implementação final da Sprint 4. Substitua a indicação **PENDENTE** pelo link correto do novo vídeo publicado no YouTube. Não entregue este README com essa pendência.
+> **Observação:** o vídeo vinculado é da Sprint 3. Ele foi mantido como registro da apresentação anterior e não mostra todas as funcionalidades implementadas na Sprint 4.
 
 ### Pré-requisitos
 
