@@ -210,7 +210,7 @@ Para publicar a aplicação React, importe o repositório no projeto da Vercel e
 
 O arquivo `my-app/vercel.json` inclui a regra de reescrita necessária para navegar diretamente às rotas internas da aplicação React.
 
-**URL pública do Front-end na Vercel:** *pendente — inserir após o deploy e a validação da aplicação.*
+**URL pública do Front-end na Vercel:** https://ecoup-sprint4-front.vercel.app
 
 Depois do deploy, verificar `/`, `/participar`, `/simulador`, `/acoes`, `/acoes/:codigo` e as rotas estáticas, inclusive recarregando páginas internas.
 
@@ -219,8 +219,8 @@ Depois do deploy, verificar `/`, `/participar`, `/simulador`, `/acoes`, `/acoes/
 - **GitHub Front-end:** https://github.com/nicolaspk/ecoup-sprint4-front
 - **GitHub Backend Java:** https://github.com/nicolaspk/ecoup-sprint4-java
 - **API Java no Render (URL configurada):** https://ecoup-sprint4-java.onrender.com
-- **Site na Vercel:** *a publicar e inserir aqui após validação*
-- **Vídeo de apresentação:** https://youtu.be/fNAN-4qcYnM — *link que já constava no README anterior; confirmar se é o vídeo definitivo da Sprint 4, com até 3 minutos, e substituir se necessário.*
+- **Site na Vercel:** https://ecoup-sprint4-front.vercel.app
+- **Vídeo de apresentação:** https://youtu.be/fNAN-4qcYnM
 
 ## 9. Imagens do projeto
 
