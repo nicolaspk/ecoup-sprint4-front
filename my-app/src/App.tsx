@@ -6,7 +6,7 @@ export default function App() {
   return (
     <div className="bg-[#050816] text-[#ffffff] min-h-screen flex flex-col font-sans overflow-x-hidden">
       <Header />
-      <main className="mt-[100px] p-[40px_5%] max-w-[1400px] mx-auto w-full flex-grow">
+      <main className="mt-[110px] lg:mt-[125px] p-[24px_5%] sm:p-[40px_5%] max-w-[1400px] mx-auto w-full flex-grow">
         <Outlet /> 
       </main>
       <Footer />
