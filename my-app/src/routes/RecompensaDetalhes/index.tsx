@@ -7,14 +7,18 @@ export default function RecompensaDetalhes() {
   const detalhes = id === '1' 
     ? {
         titulo: "Subsídio Total na Energia",
-        descricao: "Ao conquistar o 1º lugar no ranking mensal de Pontos Ecoa, você garante 100% de isenção na sua próxima fatura de energia elétrica. O benefício é processado automaticamente pelo sistema da SoulUp no ciclo de faturamento seguinte.",
+        descricao: "Ao conquistar o 1º lugar no ranking mensal de Pontos Ecoa, a proposta da ECOUP prevê subsídio de 100% da conta de energia elétrica. Este benefício ainda não é processado pela API atual.",
         icone: "🏆"
       }
     : {
         titulo: "Subsídio Parcial na Energia",
-        descricao: "Ficando em 2º ou 3º lugar no ranking mensal, você é recompensado com um desconto de até 50% na sua conta de luz. Continue registrando suas ações sustentáveis para alcançar o topo!",
+        descricao: "Ficando em 2º ou 3º lugar no ranking mensal, o projeto ECOUP prevê subsídio de até 50% da conta de energia elétrica. A API atual ainda não concede esse benefício.",
         icone: "🥈"
       };
+
+  if (id !== '1' && id !== '2') {
+    return <section className="text-center p-10"><h2 className="text-white text-2xl font-bold">Recompensa não encontrada</h2><button onClick={() => navigate('/recompensas')} className="text-[#00f5c8] underline mt-5">Voltar ao catálogo</button></section>;
+  }
 
   return (
     <section className="bg-[#10172a] p-[30px] md:p-[40px] rounded-[12px] border border-white/5 text-center max-w-[600px] mx-auto shadow-[0_20px_45px_rgba(0,0,0,0.35)]">
