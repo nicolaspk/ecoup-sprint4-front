@@ -120,7 +120,7 @@ ECOUP (raiz do repositório)
 | **Site público na Vercel** | https://ecoup-sprint4-front.vercel.app |
 | **API Java publicada no Render** | https://ecoup-sprint4-java.onrender.com |
 | **GitHub do backend Java** | https://github.com/nicolaspk/ecoup-sprint4-java |
-| **Vídeo de apresentação no YouTube (Sprint 3)** | https://youtu.be/fNAN-4qcYnM |
+| **Vídeo de apresentação no YouTube** | https://youtu.be/fNAN-4qcYnM |
 
 > **Observação:** o vídeo vinculado é da Sprint 3. Ele foi mantido como registro da apresentação anterior e não mostra todas as funcionalidades implementadas na Sprint 4.
 
