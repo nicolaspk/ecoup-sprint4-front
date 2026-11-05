@@ -14,28 +14,30 @@ import Dashboard from './routes/Dashboard/index.tsx';
 import Recompensas from './routes/Recompensas/index.tsx';
 import RecompensaDetalhes from './routes/RecompensaDetalhes/index.tsx';
 import Participar from './routes/Participar/index.tsx';
+import Acoes from './routes/Acoes/index.tsx';
+import AcaoDetalhe from './routes/AcaoDetalhe/index.tsx';
+import NaoEncontrada from './routes/NaoEncontrada/index.tsx';
 
 const router = createBrowserRouter([
   {
-    path: '/', 
-    element: <App />, 
-    children: [
-      {path: '/', element: <Home />},
-      {path: '/sobre', element: <Sobre />},
-      {path: '/faq', element: <Faq />},
-      {path: '/contato', element: <Contato />},
-      {path: '/participar', element: <Participar />},
-      {path: '/integrantes', element: <Integrantes />},
-      {path: '/simulador', element: <Simulador />},
-      {path: '/dashboard', element: <Dashboard />},
-      {path: '/recompensas', element: <Recompensas />},
-      {path: '/recompensas/:id', element: <RecompensaDetalhes />}
-    ]
-  }
+    path: '/', element: <App />, children: [
+      { index: true, element: <Home /> },
+      { path: 'sobre', element: <Sobre /> },
+      { path: 'faq', element: <Faq /> },
+      { path: 'contato', element: <Contato /> },
+      { path: 'integrantes', element: <Integrantes /> },
+      { path: 'participar', element: <Participar /> },
+      { path: 'simulador', element: <Simulador /> },
+      { path: 'acoes', element: <Acoes /> },
+      { path: 'acoes/:codigo', element: <AcaoDetalhe /> },
+      { path: 'dashboard', element: <Dashboard /> },
+      { path: 'recompensas', element: <Recompensas /> },
+      { path: 'recompensas/:id', element: <RecompensaDetalhes /> },
+      { path: '*', element: <NaoEncontrada /> },
+    ],
+  },
 ]);
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
+  <StrictMode><RouterProvider router={router} /></StrictMode>,
 );
