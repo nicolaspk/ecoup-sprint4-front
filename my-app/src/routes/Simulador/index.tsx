@@ -2,22 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { buscarUsuario, cadastrarAcao } from '../../services/api';
+import { obterParticipante, sairDoParticipante } from '../../services/participante';
 import { categoriasAcao, obterPontosPorCategoria } from '../../types/types';
 import type { CategoriaAcao, DadosAcao, Usuario } from '../../types/types';
 
 type FormularioAcao = { titulo: string; categoria: CategoriaAcao; linkEvidencia: string };
 
-// A sessão usa a mesma chave do cadastro. Após unir as branches,
-// a equipe pode centralizar estas funções em services/participante.ts.
-function obterParticipante(): number | null {
-  const valor = window.sessionStorage.getItem('ecoup-participante');
-  const codigo = Number(valor);
-  return valor && Number.isInteger(codigo) && codigo > 0 ? codigo : null;
-}
 
-function sairDoParticipante(): void {
-  window.sessionStorage.removeItem('ecoup-participante');
-}
 
 export default function Simulador() {
   const navegar = useNavigate();
